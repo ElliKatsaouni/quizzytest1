@@ -1,0 +1,92 @@
+{% load staticfiles %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,
+    initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>
+        Quizzy:
+        {% block title_block %}
+            Find the best pub quizzes in your city!
+        {% endblock %}
+    </title>
+    <link rel="stylesheet" href="{% static 'style/custom.css' %}">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-dark navbar-expand-lg py-0">
+    <div class="container">
+        <a class="navbar-brand py-0" href="{% url 'index' %}">
+            <img src="/static/images/QuizzyLogo2.png" width="70" height="70" alt=""> </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
+                aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item py-0"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-search"></i></a>
+                    <div class="dropdown-menu">
+                        <form class="form-inline">
+                            <input type="text" class="form-control pull-left" placeholder="Find pubs" id="suggestion">
+                        </form>
+                        <ul id="pubsuggestions">
+                            <!-- -->
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user"></i></a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {% if user.is_authenticated %}
+                            <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'auth_logout' %}?next={% url 'index' %}">Logout</a>
+                        {% else %}
+                            <a class="dropdown-item"
+                               href="{% url 'auth_login' %}?next={% url 'index' %}">Login</a>
+                        {% endif %}
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div>
+    {% block body_block %}
+        This is body_block's default content.
+    {% endblock %}
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <span class="text">© 2018 Copyright: The Quizmasters</span>
+    </div>
+</footer>
+
+<script src="{% static "script/custom_js.js" %}"></script>
+<script src="{% static "script/custom_ajax.js" %}"></script>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+{% extends 'quizzy/index_base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    {{ selecteduser.username }} Profile
+{% endblock %}
+
+{% block body_block %}
+    <div class="row profile-container text-center">
+        <div class="col"></div>
+        <div class="col-md-6 text-center">
+            <img src="/static/images/QuizzyLogo3-Without-Background.png" height="75"> </a>
+            <p class="profile-heading">Hello, {{ selecteduser.username }}!</p>
+            <img src="{{ MEDIA_URL }}{{ userprofile.picture }}" height="300" alt="{{ selecteduser.username }}"/>
+        </div>
+        <div class="col"></div>
+    </div>
+
+
+    <div class="row profile-container text-center">
+        <div class="col"></div>
+        <div class="col-md-4">
+            <hr class="divider">
+            <p class="register-text">Your favorite quizzes:</p>
+        </div>
+        <div class="col"></div>
+    </div>
+
+    <div class="row profile-container">
+        <div class="col"></div>
+        <div class="col-md-4">
+            {% if userprofile.favorites.all.count == 0 %}
+                You do not have any favorites yet.
+            {% else %}
+                <ul>
+                    {% for favorites in userprofile.favorites.all %}
+                        <li>{{ favorites }} at <a
+                                href='{% url 'show_pub' favorites.pub.city.slug favorites.pub.slug %}'>{{ favorites.pub }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="col"></div>
+    </div>
+
+
+    <div class="row profile-container text-center">
+        <div class="col"></div>
+        <div class="col-md-4">
+            <hr class="divider">
+            <p class="register-text">Edit your profile:</p>
+        </div>
+        <div class="col"></div>
+    </div>
+
+    <div class="row profile-container">
+        <div class="col"></div>
+        <div class="col-md-4">
+            {% if selecteduser.username == user.username %}
+                <form method="post" action="." enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" value="Update"/>
+                </form>
+            {% endif %}
+        </div>
+        <div class="col"></div>
+    </div>
+
+    <div class="row profile-container text-center">
+        <div class="col"></div>
+        <div class="col-md-4">
+            <a href="{% url 'change_password' %}">
+                <button type="button" class="btn btn-primary">Change
+                    Password
+                </button>
+            </a>
+        </div>
+        <div class="col"></div>
+    </div>
+    <div id="edit_profile"></div>
+{% endblock %}

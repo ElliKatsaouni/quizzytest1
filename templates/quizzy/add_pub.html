@@ -1,0 +1,41 @@
+{% extends 'quizzy/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+Add a pub
+{% endblock %}
+
+{% block body_block %}
+
+<div class="container text-center">
+    <div class="form-container">
+        <div class="form-spacer">
+            <h1 class="form-heading">Add a pub</h1>
+            <hr>
+        </div>
+
+        <div class="form-spacer">
+            <div class="form-group">
+                <form id="pub_form" class="form-group" enctype="multipart/form-data" method="post"
+                      action="/quizzy/home/{{ city.slug }}/add_pub/">
+                    {% csrf_token %}
+                    {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                    {% endfor %}
+                    {% for field in form.visible_fields %}
+                    <div class="form-group">
+                        <label>
+                            {{ field.errors }}
+                            {{ field.help_text }}
+                            {{ field }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

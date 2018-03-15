@@ -1,0 +1,287 @@
+{% extends 'quizzy/base.html' %}
+{% load staticfiles %}
+{% load comments static %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'fluent_comments/css/ajaxcomments.css' %}"/>
+<script type="text/javascript" src="{% static 'fluent_comments/js/ajaxcomments.js' %}"></script>
+<!-- {% load comments %} -->
+
+{% block title_block %}
+    {{ pub.name }}
+{% endblock %}
+
+
+
+{% block body_block %}
+    {% if pub %}
+        {% get_comment_count for quizzy.pub pubid as comment_count %}
+        <header class="city-heading">
+            <h1 class="pub-heading-1" onload="initMap()">{{ pub.name }}</h1>
+        </header>
+
+        <div class="container">
+        <div class="row pub-detail-container">
+            <div class="col"></div>
+            <div class="col-6">
+                <img class="pub-img-fluid" src="{{ MEDIA_URL }}{{ pub.picture }}" alt="pub-picture"/>
+            </div>
+            <div class="col-3"></div>
+        </div>
+        <div class="row justify-content-right pub-detail-container">
+                    <div class="col"></div>
+                    <div class="col-1">
+                        <div>
+                            <button class="fb-button">
+                                <a class="facebook" href="https://www.facebook.com/share.php?u={{url}}&title={{"This pub is awesome"}}" target="blank">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                </button>
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        <div>
+                            <button class="twitter-button">
+                                <a class="twitter" href="https://twitter.com/intent/tweet?status={{title}}+{{url}}" target="blank">
+                                   <i class="fab fa-twitter"></i>
+                                </a>
+                                </button>
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        <div>
+                            <button class="google-button">
+                               <a class="googleplus" href="https://plus.google.com/share?url={{url}}" target="blank">
+                                   <i class="fab fa-google-plus-g"></i>
+                               </a>
+                                </button>
+                        </div>
+                    </div>
+        <div class="col"></div>
+                </div>
+        <div class="row pub-detail-container">
+            <div class="col"></div>
+            <div class="col-6 details">
+                <strong>Pub</strong>
+                {% if user.is_authenticated %}
+                    <button id="editButton" type="button" class="btn btn-primary btn-sm">
+                        <a href="{% url 'update_pub' city.slug pub.slug %}" title="Edit pub details"><i
+                                class="fas fa-edit"></i></a>
+                    </button>
+                {% endif %}
+
+                <p id="img"></p>
+                <p id="address">
+                    <i class="fas fa-map-marker pub-icons" style="padding-right: 4px"></i>
+                    <a href=" http://maps.google.com/?q={{ pub.name }} {{ pub.street }} {{ pub.street_number }} {{ pub.postcode }}"> {{ pub.street }} {{ pub.street_number }} {{ pub.postcode }}
+                        {{ pub.city }}
+                    </a>
+                </p>
+
+                <p>
+                    <i class="fas fa-globe pub-icons" style="padding-right: 4px"></i>
+                    <a href="{{ pub.url }}"> Website </a>
+                </p>
+                <p>
+                    <i class="fas fa-phone pub-icons" style="padding-right: 4px"></i>
+                    <a href="tel:{{ pub.telephone }}"> {{ pub.telephone }} </a>
+                </p>
+            </div>
+            <div class="col"></div>
+        </div>
+
+        <div class="row pub-detail-container justify-content-center">
+        <div class="col"></div>
+        <div class="col-6 justify-content-center details">
+      {% if quizzes %}
+          </br>
+           {% for quiz in quizzes %}
+               <strong>{{ quiz.weekday }} Quiz</strong>
+               {% if user.is_authenticated %}
+                   <button id="editButton" type="button" class="btn btn-primary btn-sm">
+                       <a href="{% url 'update_quiz' city.slug pub.slug quiz.id %}" title="Edit quiz details">
+                           <i class="fas fa-edit"></i></a>
+                   </button>
+
+                   {% if quiz in user.userprofile.favorites.all %}
+
+                       <button id = "unfavorite-{{ quiz.id }}" class="unfavorite btn btn-primary btn-sm" data-quizid="{{ quiz.id }}" data-userid="{{ user.id }}"
+                               type="button" title="Remove from favorites">
+                           <i class="fas fa-heart"></i>
+                       </button>
+
+                   {% else %}
+
+                       <button id = "favorite-{{ quiz.id }}" class="favorite btn btn-primary btn-sm" data-quizid="{{ quiz.id }}" data-userid="{{ user.id }}"
+                               type="button" title="Add to favorites">
+                           <i class="far fa-heart"></i>
+                       </button>
+                   {% endif %}
+
+               {% endif %}
+
+               <div>
+                   <strong id="upVotes_count-{{ quiz.id }}">{{ quiz.upVotes }}</strong> people like this quiz
+
+                   {% if user.is_authenticated %}
+                       {% if quiz in user.userprofile.ratedquizzes.all %}
+                             <button class="upVotes disabled btn btn-primary btn-sm" type="button">
+                           <i class="fas fa-thumbs-up"></i></button>
+
+                       {% else %}
+                         <button id="upVotes_button-{{ quiz.id }}" class="upVotes btn btn-primary btn-sm" data-quizid="{{ quiz.id }}" data-userid="{{ user.id }}"
+                                 type="button">
+                           <i class="fas fa-thumbs-up"></i>
+                       </button>
+                   {% endif %}
+
+               {% endif %}
+               </div>
+
+               <div>
+                   <strong id="downVotes_count-{{ quiz.id }}" data-quizid="{{ quiz.id }}">{{ quiz.downVotes }}</strong> people do not like this quiz
+                   {% if user.is_authenticated %}
+                       {% if quiz in user.userprofile.ratedquizzes.all %}
+                            <button class="downVotes btn btn-primary btn-sm disabled" type="button">
+                           <i class="fas fa-thumbs-down"></i>
+                       </button>
+                           {% else %}
+                       <button id="downVotes_button-{{ quiz.id }}" class="downVotes btn btn-primary btn-sm" data-quizid="{{ quiz.id }}" data-userid="{{ user.id }}"
+                               type="button">
+                           <i class="fas fa-thumbs-down"></i>
+                       </button>
+                   {% endif %}
+               {% endif %}
+                </div>
+                </br>
+                <p>
+                    <i class="fas fa-tags pub-icons" style="padding-right: 4px"></i>
+                    {{ quiz.categories }}
+                </p>
+
+                <p>
+                    <i class="fas fa-calendar-alt pub-icons" style="padding-right: 4px"></i>
+                    {{ quiz.weekday }}, {{ quiz.time }}
+                </p>
+
+                <p>
+                    <i class="fas fa-trophy pub-icons" style="padding-right: 4px"></i>
+                    {{ quiz.prize }}
+                </p>
+
+                <p>
+                    <i class="far fa-money-bill-alt pub-icons" style="padding-right: 4px"></i>
+                    {{ quiz.entry_fee }}
+                </p>
+
+
+
+                        <hr class="divider">
+            {% endfor %}
+        {% else %}
+            <strong>No Quizzes currently available for this pub.</strong>
+        {% endif %}
+    {% else %}
+        The specified pub does not exist!
+    {% endif %}
+</div>
+<div class="col"></div>
+</div>
+<div class="row pub-detail-container justify-content-center">
+    <div class="col-3"></div>
+    {% if user.is_authenticated %}
+        <div class="col-2">
+            <a href="{% url 'add_quiz' city.slug pub.slug %}">
+                <button type="button" class="btn btn-primary pub-detail-btn">Add quiz</button>
+            </a>
+        </div>
+
+    {% endif %}
+    <div class="col-3"></div>
+</div>
+<div class="row pub-detail-container">
+    <div id="map"></div>
+</div>
+<div class="comment-heading">
+    <p>Comments [{{ comment_count }}]</p>
+</div>
+<div>
+    {% get_comment_list for quizzy.pub pubid as comment_list %}
+    {% for comment in comment_list %}
+        <div>
+            <p class="comment-info-left">{{ comment.user_name }}</p>
+            <p class="comment-info-right">{{ comment.submit_date }}</p>
+        </div>
+        <div>
+            <p class="comment-list-center">{{ comment.comment }}</p>
+        </div>
+    {% endfor %}
+</div>
+
+<div>
+    {% if user.is_authenticated %}
+        {% get_comment_form for quizzy.pub pubid as form %}
+        <form action="{% comment_form_target %}" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                {% for field in form %}
+                    {% if field.is_hidden %}
+                        <div>{{ field }}</div>
+                    {% endif %}
+                {% endfor %}
+                {% ifequal field.name "name" %}
+                    <input id="id_name" type="hidden" name="name" value="{{ user.username }}"/>
+                {% else %}
+                    {% ifequal field.name "email" %}
+                        <input type="hidden" name="email" value="{{ user.email }}" id="id_email"/>
+                    {% else %}
+                        {% ifequal field.name "comment" %}
+                            <div>
+                                <p><label class="required register-text" for="id_comment">Post a comment:</label><br/>
+                                    <textarea class="comment-box" id="id_comment" name="comment" type="text" rows="10"
+                                              cols="60"></textarea></p>
+                            </div>
+                        {% else %}
+                        {% endifequal %}{% endifequal %}{% endifequal %}
+            {% endfor %}
+            <input type="submit" value="Post" class="btn btn-primary">
+            <input type="hidden" name="next" value="{% url 'show_pub' city.slug pub.slug %}"/>
+        </form>
+    {% else %}
+        <p class="register-text comment-register">
+            Please<a href="{% url 'registration_register' %}"> register here</a> to submit a new comment!</p>
+    {% endif %}
+</div>
+
+</div>
+    <script>
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 16,
+                center: {lat: -34.397, lng: 150.644}
+            });
+            var geocoder = new google.maps.Geocoder();
+            geocodeAddress(geocoder, map);
+        }
+
+        function geocodeAddress(geocoder, resultsMap) {
+            var address = document.getElementById('address').innerText;
+            geocoder.geocode({'address': address}, function (results, status) {
+                if (status === 'OK') {
+                    resultsMap.setCenter(results[0].geometry.location);
+                    placeId = results[0].place_id;
+                    console.log(placeId);
+                    var marker = new google.maps.Marker({
+                        map: resultsMap,
+                        position: results[0].geometry.location
+
+                    });
+                } else {
+                    console.log('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPf1iJ55pai0XiWNOptMugcRKOizFRX8s&callback=initMap">
+    </script>
+{% endblock %}

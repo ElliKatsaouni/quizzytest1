@@ -1,0 +1,6 @@
+
+	{% if pubs %}
+		{% for p in pubs %}
+		         <li class="nav-item"><a href="{% url 'show_pub' p.city.slug p.slug %}">{{ p.name }}</a></li>
+		{% endfor %}
+	{% endif %}

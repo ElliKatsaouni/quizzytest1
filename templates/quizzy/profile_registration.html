@@ -1,0 +1,29 @@
+{% extends 'quizzy/index_base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+Registration - Step 2
+{% endblock %}
+
+{% block body_block %}
+
+<div class="container text-center">
+    <div class="form-container text-center">
+        <div>
+            <h1 class="form-heading">Registration - Step 2</h1>
+            <hr>
+        </div>
+
+        <div class="form-spacer">
+            <div class="form-group">
+                <form method="post" action="." enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" value="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

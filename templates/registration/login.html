@@ -1,0 +1,44 @@
+{% extends 'quizzy/index_base.html' %}
+{% block body_block %}
+
+<div class="container text-center">
+    <div class="form-container text-center">
+        <div>
+            <h1 class="form-heading">Login</h1>
+            <hr>
+        </div>
+
+        <div class="form-spacer">
+            <div class="form-group">
+                <form method="post" action=".">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Log in</button>
+                    <input type="hidden" name="next" value="{{ next }}"/>
+                </form>
+            </div>
+            <hr>
+        </div>
+
+        <div>
+            <p class="register-text">Not a member yet?</p>
+            <a href="{% url 'registration_register' %}"><button type="button" class="btn btn-primary">
+                Register here</button></a>
+        </div>
+
+        <div>
+            <br/>
+            <p class="register-text">...or login with</p>
+            <button id="login" class="btn btn-primary btn-md" type="button">
+                <a href="{% url 'social:begin' 'facebook' %}"><i class="fab fa-facebook-square"></i></a></button>
+            <button id="login" class="btn btn-primary btn-md" type="button">
+                <a href="{% url 'social:begin' 'twitter' %}"><i class="fab fa-twitter-square"></i></a></button>
+            <button id="login" class="btn btn-primary btn-md" type="button">
+                <a href="{% url 'social:begin' 'google-oauth2' %}"><i class="fab fa-google-plus-square"></i></a></button>
+            <br/>
+            <br/>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

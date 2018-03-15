@@ -1,0 +1,27 @@
+{% extends 'quizzy/index_base.html' %}
+{% block body_block %}
+
+<div class="container text-center">
+    <div class="form-container">
+        <div class="form-spacer">
+            <h1 class="form-heading">Register here</h1>
+            <hr class="divider">
+        </div>
+
+        <div class="form-spacer">
+            <div class="form-group">
+                <form method="post" action=".">
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <input type="hidden" name="next" value="{{ next }}"/>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

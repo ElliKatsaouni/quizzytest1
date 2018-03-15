@@ -1,0 +1,134 @@
+{% extends 'quizzy/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+{{ city.name }} quizzes
+{% endblock %}
+{% block body_block %}
+    <!-- row for city header -->
+        <header class="city-heading">
+            <h1 class="pub-heading-1">{{ city.name }}</h1>
+        </header>
+     <div class="container">
+     <!-- row for weekday selection -->
+     <div class="row justify-content-center">
+         <div class="col"></div>
+         <div class="col-6">
+              <form method="get" class="weekday-selection">
+                 {{ filter.form.as_p }}
+                 <button type="submit" class="weekday-btn"> <i class="fas fa-retweet"></i>  find quiz on weekday </button>
+             </form>
+         </div>
+         <div class="col"></div>
+     </div>
+        <!-- row for pubs -->
+        <div class="row justify-content-center">
+            {% if quizzes %}
+                {% for quiz in filter.qs %}
+                    {% if pubs %}
+                        {% for pub in pubs %}
+                         {% if quiz.pub.id == pub.id %}
+                            <div class="card">
+                                <img class="card-img-top card-img" src="{{ MEDIA_URL }}{{ pub.picture }}" alt="pub-picture">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ pub.name }}</h5>
+                                    <p class="card-text">Quiz:</p>
+                                        <p class="card-text">{{ quiz.weekday }}, {{ quiz.time }}</p>
+                                        <p class="card-text">{{ quiz.upVotes }}   <i class="fas fa-thumbs-up"></i>
+                                            {{ quiz.downVotes }}   <i class="fas fa-thumbs-down" ></i>
+                                        </p>
+                                    <a href='{{ pub.slug }}'> <button class="btn btn-primary">
+                                        Go To Pub</button></a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <strong>There are no pubs found.</strong>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+     <div class="row justify-content-center map-container">
+     <p class="map-heading">pubs that don't have a quiz yet</p>
+            {% for pub in pub_without_quiz %}
+                 <div class="card">
+                                <img class="card-img-top card-img" src="{{ MEDIA_URL }}{{ pub.picture }}" alt="pub-picture">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ pub.name }}</h5>
+                                    <p class="card-text">no quiz yet</p>
+                                    <a href='{{ pub.slug }}'> <button class="btn btn-primary">
+                                        Go To Pub</button></a>
+                                </div>
+                            </div>
+            {% endfor %}
+     </div>
+        <!-- row for button -->
+        <div class="row">
+        <div class="col"></div>
+        <div class="col-6">
+            {% if user.is_authenticated %}
+                <a href="{% url 'add_pub' city.slug %}">
+                    <button type="button" class="btn btn-primary addPubButton">Add a new pub</button></a>
+            {% endif %}
+        </div>
+        <div class="col"></div>
+        </div>
+        <!-- row for map with several markers -->
+        <div class="row map-container">
+            <p class="map-heading">See all pubs in {{ city.name }}:</p>
+            <div id="map"></div>
+        </div>
+    </div>
+    <script>
+        var addresses = {};
+
+        {% if pubs %}
+            {% for pub in pubs %}
+                addresses["{{ pub.name }}"] = "{{ pub.name }}, {{ pub.street }}, {{ pub.street_number }}, {{ pub.city }}";
+            {% endfor %}
+            {% endif %}
+
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {
+                    lat: -34.397,
+                    lng: 150.644
+                },
+                zoom: 10
+            });
+
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 12,
+                center: new google.maps.LatLng(41.976816, -87.659916),
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+
+            for (var address in addresses) {
+                var geocoder = new google.maps.Geocoder();
+                var selectedAddress = addresses[address];
+                geocodeAddress(geocoder, map, selectedAddress);
+            }
+
+        }
+
+        function geocodeAddress(geocoder, resultsMap, selectedAddress) {
+            geocoder.geocode({'address': selectedAddress}, function (results, status) {
+                if (status === 'OK') {
+                    resultsMap.setCenter(results[0].geometry.location);
+                    var marker = new google.maps.Marker({
+                        map: resultsMap,
+                        position: results[0].geometry.location
+
+                    });
+                } else {
+                    console.log('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPf1iJ55pai0XiWNOptMugcRKOizFRX8s&callback=initMap">
+    </script>
+{% endblock %}

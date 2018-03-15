@@ -1,0 +1,58 @@
+{% extends 'quizzy/index_base.html' %}
+{% load staticfiles %}
+
+
+{% block body_block %}
+<div class="startpage-container">
+    <div class="text-center startpage-top">
+        <!-- <p class="welcome-heading-1">Welcome to Quizzy!</p> -->
+        <div>
+            <img class="startpage-logo" src="/static/images/QuizzyLogo1.png" alt="Quizzy">
+        </div>
+        <p class="welcome-heading-2">Choose your city</p>
+        <div class="bounce">
+          <a href="#cities"> <i class="fas fa-arrow-down startpage-arrow"></i> </a>
+        </div>
+    </div>
+
+    <div class="text-center startpage-bottom">
+        <div class="row" id="cities">
+            {% if cities %}
+            {% for city in cities %}
+            {% if city.name == "Aberdeen" %}
+            <div class="col-sm-4">
+                <h2 class="city-selector">Aberdeen</h2>
+                <a href={% url 'home' city.slug %}>
+                <div>
+                    <img class="img-fluid" src="/static/images/Aberdeen_Cropped.jpg" alt="Aberdeen">
+                </div>
+                </a>
+            </div>
+            {% endif %}
+            {% if city.name == "Glasgow" %}
+            <div class="col-sm-4">
+                <h2 class="city-selector">Glasgow</h2>
+                <a href={% url 'home' city.slug %}>
+                <div>
+                    <img class="img-fluid" src="/static/images/Glasgow_Cropped.jpg" alt="Glasgow">
+                </div>
+                </a>
+            </div>
+            {% endif %}
+            {% if city.name == "Edinburgh" %}
+            <div class="col-sm-4">
+                <h2 class="city-selector">Edinburgh</h2>
+                <a href={% url 'home' city.slug %}>
+                <div>
+                    <img class="img-fluid" src="/static/images/Edinburgh_Cropped.jpg" alt="Edinburgh">
+                </div>
+                </a>
+                </button>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

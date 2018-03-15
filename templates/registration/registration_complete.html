@@ -1,0 +1,19 @@
+{% extends 'quizzy/index_base.html' %}
+
+{% block body_block %}
+<div class="container text-center">
+    <div class="form-container">
+        <div class="form-spacer">
+            <h1 class="form-heading">Registration complete</h1>
+            <hr class="divider">
+            <p>Thank you. You are now registered!</p>
+            <a href="{% url 'index' %}">
+                <button type="button" class="btn btn-primary">
+                    Back
+                </button>
+            </a>
+            <input type="hidden" name="back" value="{{ back }}"/>
+        </div>
+    </div>
+</div>
+{% endblock %}
