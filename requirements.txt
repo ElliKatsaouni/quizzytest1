@@ -15,7 +15,7 @@ django-registration-redux==1.4
 django-tag-parser==3.1
 idna==2.6
 oauthlib==2.0.6
-Pillow==5.0.0
+Pillow==9.0.0
 pycparser==2.18
 PyJWT==1.6.0
 python-akismet==0.3.0
